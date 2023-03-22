@@ -1,4 +1,5 @@
 const order = require("../models/orderModel");
+const Order = require("../models/orderModel");
 
 module.exports.addOneOrder = async (req, res) => {
   const {
@@ -46,15 +47,23 @@ module.exports.getListOrderByStatus = async (req, res) => {
 };
 
 module.exports.getOrderByOrderId = async (req, res) => {
-  const { orderId } = req.params; // lấy orderId từ params
-
+  const { id } = req.params;
   try {
-    const order = await Order.findOne({ orderId: orderId }); // tìm đơn hàng bằng orderId
+    const order = await Order.findOne({ _id: id });
     if (order) {
-      res.json(order); // trả về đơn hàng nếu tìm thấy
+      res.json(order);
     } else {
       res.json({ message: "Không tìm thấy đơn hàng." });
     }
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+};
+
+module.exports.getAllOrder = async (req, res) => {
+  try {
+    const listOrder = await order.find();
+    res.json(listOrder);
   } catch (err) {
     res.json({ message: err.message });
   }
