@@ -1,10 +1,12 @@
 const express = require("express");
 const router = express.Router();
-<<<<<<< HEAD
-const { addOneShipper } = require("../controllers/shipperController");
 
+const {
+  addOneShipper,
+  getAllShippers,
+} = require("../controllers/shipperController");
+
+router.get("/all", getAllShippers);
 router.post("/new", addOneShipper);
-=======
->>>>>>> dat3023
 
 module.exports = router;

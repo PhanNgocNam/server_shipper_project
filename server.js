@@ -11,11 +11,7 @@ const shipperRoute = require("./routes/shipperRoute");
 app.use(express.json());
 app.use(
   cors({
-    origin: [
-      "http://localhost:3000",
-      "http://192.168.88.111:1900",
-      "exp://192.168.88.111:19000",
-    ],
+    origin: "*",
     methods: "*",
   })
 );

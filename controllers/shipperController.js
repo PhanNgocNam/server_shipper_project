@@ -27,3 +27,12 @@ module.exports.addOneShipper = async (req, res) => {
     res.json({ message: err.message });
   }
 };
+
+module.exports.getAllShippers = async (req, res) => {
+  try {
+    const shippers = await shipper.find();
+    res.json(shippers);
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+};
