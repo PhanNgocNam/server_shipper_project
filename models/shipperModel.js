@@ -3,31 +3,36 @@ const mongoose = require("mongoose");
 const shipperSchema = new mongoose.Schema({
   fullName: {
     type: String,
-    require: true,
+    required: true,
   },
   storage: {
     type: String,
-    require: true,
+    required: true,
   },
   phoneNumber: {
     type: String,
-    require: true,
+    required: true,
+    unique: true,
   },
   license: {
     type: String,
-    require: true,
+    required: true,
   },
   avatarURL: {
     type: String,
-    require: true,
+    required: false,
   },
   blxURL: {
     type: String,
-    require: true,
+    required: false,
   },
   cccdURL: {
     type: String,
-    require: true,
+    required: false,
+  },
+  password: {
+    type: String,
+    required: true,
   },
 });
 

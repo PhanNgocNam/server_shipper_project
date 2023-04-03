@@ -1,10 +1,14 @@
 const express = require("express");
 const router = express.Router();
-<<<<<<< HEAD
-const { addOneShipper } = require("../controllers/shipperController");
+const {
+  addOneShipper,
+  getAllShippers,
+  shipperLogin,
+  deleteShipperById,
+} = require("../controllers/shipperController");
 
+router.post("/login", shipperLogin);
 router.post("/new", addOneShipper);
-=======
->>>>>>> dat3023
-
+router.get("/all", getAllShippers);
+router.delete("/:id", deleteShipperById);
 module.exports = router;
