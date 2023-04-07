@@ -79,8 +79,11 @@ module.exports.shipperLogin = async (req, res) => {
       { expiresIn: "1h" }
     );
 
-    // Send the token to the client
-    res.json({ token });
+    // Return the token and shipper info to the client
+    res.json({
+      token,
+      shipper: existingShipper.toJSON(),
+    });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
