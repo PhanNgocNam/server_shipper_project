@@ -76,7 +76,7 @@ module.exports.shipperLogin = async (req, res) => {
         shipperId: existingShipper._id,
       },
       process.env.JWT_SECRET,
-      { expiresIn: "1h" }
+      { expiresIn: "24h" }
     );
 
     // Return the token and shipper info to the client

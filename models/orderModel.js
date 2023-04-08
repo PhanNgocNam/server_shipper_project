@@ -44,6 +44,11 @@ const orderSchema = new mongoose.Schema({
     type: Number,
     required: true,
   },
+  shipperId: {
+    type: mongoose.Schema.Types.ObjectId,
+    ref: "shipper",
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("order", orderSchema);
