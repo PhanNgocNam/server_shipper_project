@@ -6,8 +6,9 @@ const cors = require("cors");
 const app = express();
 const PORT = process.env.PORT;
 const adminRoute = require("./routes/adminRoute");
-const orderRoute = require("./routes/orderRouter");
+const orderRoute = require("./routes/orderRoute");
 const shipperRoute = require("./routes/shipperRoute");
+const holeOrderRoute = require("./routes/holeOrderRoute");
 app.use(express.json());
 app.use(
   cors({
@@ -23,7 +24,7 @@ app.use(
 app.use("/auth/admin", adminRoute);
 app.use("/order", orderRoute);
 app.use("/shipper", shipperRoute);
-
+app.use("/holeOrder", holeOrderRoute);
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,

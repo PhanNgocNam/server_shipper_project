@@ -1,6 +1,6 @@
 // const order = require("../models/orderModel");
 const order = require("../models/orderModel");
-const shipper = require("../models/shipperModel");
+
 module.exports.addOneOrder = async (req, res) => {
   const {
     deliveryAddress,
@@ -8,35 +8,28 @@ module.exports.addOneOrder = async (req, res) => {
     storage,
     coords,
     orderName,
+    dateAdded,
+    dateDeliver,
     status,
     weight,
-    shipperId,
   } = req.body;
-
   try {
-    // Kiểm tra shipper có tồn tại không
-    const shipper = await shipper.findById(shipperId);
-    if (!shipper) {
-      return res.status(400).json({ message: "Invalid shipper ID" });
-    }
-    // Tạo mới đơn hàng
     const newOrder = new order({
       deliveryAddress,
       phoneReceive,
       storage,
       coords,
       orderName,
+      dateAdded,
+      dateDeliver,
       status,
       weight,
-      shipperId,
     });
 
-    // Lưu đơn hàng vào database
     await newOrder.save();
-    res.json(newOrder);
-  } catch (error) {
-    console.error(error);
-    res.status(500).json({ message: "Internal server error" });
+    res.json({ message: "Success!" });
+  } catch (err) {
+    res.json({ message: err.message });
   }
 };
 
@@ -69,10 +62,12 @@ module.exports.getOrderByOrderId = async (req, res) => {
 
 // lọc theo kho hàng
 module.exports.getListOrderByStorage = async (req, res) => {
-  const { storage } = req.query;
+  const { storage } = req.params;
+  const { status } = req.query;
   try {
     const listOrder = await order.find({
       storage: storage,
+      status: status,
     });
 
     res.json(listOrder);
