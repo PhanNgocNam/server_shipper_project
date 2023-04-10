@@ -11,10 +11,9 @@ module.exports.addOneOrder = async (req, res) => {
     dateAdded,
     dateDeliver,
     status,
-    weight,
   } = req.body;
   try {
-    const newOrder = new order({
+    const newOrder = new Order({
       deliveryAddress,
       phoneReceive,
       storage,
@@ -23,7 +22,6 @@ module.exports.addOneOrder = async (req, res) => {
       dateAdded,
       dateDeliver,
       status,
-      weight,
     });
 
     await newOrder.save();
@@ -36,7 +34,7 @@ module.exports.addOneOrder = async (req, res) => {
 module.exports.getListOrderByStatus = async (req, res) => {
   const { status } = req.query;
   try {
-    const listOrder = await order.find({
+    const listOrder = await Order.find({
       status: status,
     });
 
@@ -62,7 +60,7 @@ module.exports.getOrderByOrderId = async (req, res) => {
 
 module.exports.getAllOrder = async (req, res) => {
   try {
-    const listOrder = await order.find();
+    const listOrder = await Order.find();
     res.json(listOrder);
   } catch (err) {
     res.json({ message: err.message });

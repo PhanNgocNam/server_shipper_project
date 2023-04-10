@@ -11,11 +11,10 @@ module.exports.addOneShipper = async (req, res) => {
     avatarURL,
     cccdURL,
     blxURL,
-    password,
   } = req.body;
   try {
     const salt = await bcrypt.genSalt(10);
-    const hashedPassword = await bcrypt.hash(password, salt);
+    const hashedPassword = await bcrypt.hash(phoneNumber, salt);
 
     const newShipper = new shipper({
       fullName,
@@ -57,33 +56,35 @@ module.exports.shipperLogin = async (req, res) => {
     const existingShipper = await shipper.findOne({ phoneNumber });
     if (!existingShipper) {
       return res.status(400).json({ message: "Shipper does not exist" });
+    } else {
+      // Check if password is correct
+      const passwordMatch = await bcrypt.compare(
+        password,
+        existingShipper.password
+      );
+      if (!passwordMatch) {
+        return res.status(400).json({ message: "Invalid credentials" });
+      } else {
+        res.json({ shipper: existingShipper });
+      }
     }
 
-    // Check if password is correct
-    const passwordMatch = await bcrypt.compare(
-      password,
-      existingShipper.password
-    );
-    if (!passwordMatch) {
-      return res.status(400).json({ message: "Invalid credentials" });
-    }
+    // // Create and sign a token
+    // const token = jwt.sign(
+    //   {
+    //     phoneNumber: existingShipper.phoneNumber,
+    //     username: existingShipper.fullName,
+    //     shipperId: existingShipper._id,
+    //   },
+    //   process.env.JWT_SECRET,
+    //   { expiresIn: "1h" }
+    // );
 
-    // Create and sign a token
-    const token = jwt.sign(
-      {
-        phoneNumber: existingShipper.phoneNumber,
-        username: existingShipper.fullName,
-        shipperId: existingShipper._id,
-      },
-      process.env.JWT_SECRET,
-      { expiresIn: "1h" }
-    );
-
-    // Return the token and shipper info to the client
-    res.json({
-      token,
-      shipper: existingShipper.toJSON(),
-    });
+    // // Return the token and shipper info to the client
+    // res.json({
+    //   token,
+    //   shipper: existingShipper.toJSON(),
+    // });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
