@@ -49,9 +49,9 @@ module.exports.getListOrderByStatus = async (req, res) => {
 module.exports.getOrderByOrderId = async (req, res) => {
   const { id } = req.params;
   try {
-    const order = await order.findOne({ _id: id });
-    if (order) {
-      res.json(order);
+    const foundOrder = await order.findOne({ _id: id });
+    if (foundOrder) {
+      res.json(foundOrder);
     } else {
       res.json({ message: "Không tìm thấy đơn hàng." });
     }

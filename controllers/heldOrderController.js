@@ -56,7 +56,9 @@ module.exports.removeFromHeldOrder = async (req, res) => {
 module.exports.getHeldOrdersByShipperId = async (req, res) => {
   const { shipperId } = req.params;
   try {
-    const heldOrders = await HeldOrder.find({ shipperId }).populate("orders");
+    const heldOrders = await HeldOrder.findOne({ shipperId }).populate(
+      "orders"
+    );
     res.json(heldOrders);
   } catch (err) {
     res.status(400).json({ message: err.message });
