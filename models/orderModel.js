@@ -40,6 +40,10 @@ const orderSchema = new mongoose.Schema({
     type: Date,
     default: Date.now,
   },
+  weight: {
+    type: Number,
+    required: true,
+  },
 });
 
 module.exports = mongoose.model("order", orderSchema);
