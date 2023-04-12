@@ -1,6 +1,8 @@
 require("dotenv").config();
 const express = require("express");
 const mongoose = require("mongoose");
+const http = require("http");
+const { Server } = require("socket.io");
 mongoose.set("strictQuery", true);
 const cors = require("cors");
 const app = express();
@@ -9,16 +11,7 @@ const adminRoute = require("./routes/adminRoute");
 const orderRoute = require("./routes/orderRouter");
 const shipperRoute = require("./routes/shipperRoute");
 app.use(express.json());
-app.use(
-  cors({
-    origin: [
-      "http://localhost:3000",
-      "http://192.168.1.133:1900",
-      "exp://192.168.1.133:19000",
-    ],
-    methods: "*",
-  })
-);
+app.use(cors());
 
 app.use("/auth/admin", adminRoute);
 app.use("/order", orderRoute);
@@ -32,4 +25,20 @@ mongoose
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err.message));
 
-app.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
+const server = http.createServer(app);
+
+const io = new Server(server, {
+  cors: {
+    origin: "http://192.168.1.170:19000",
+  },
+});
+
+io.on("connection", (socket) => {
+  console.log("New connection from: " + socket.id);
+
+  socket.on("track_location", (data) => {
+    console.log(data);
+  });
+});
+
+server.listen(PORT, () => console.log(`Server running on port ${PORT}...`));

@@ -65,26 +65,24 @@ module.exports.shipperLogin = async (req, res) => {
       if (!passwordMatch) {
         return res.status(400).json({ message: "Invalid credentials" });
       } else {
-        res.json({ shipper: existingShipper });
+        // res.json({ shipper: existingShipper });
+        const token = jwt.sign(
+          {
+            phoneNumber: existingShipper.phoneNumber,
+            username: existingShipper.fullName,
+            shipperId: existingShipper._id,
+          },
+          process.env.JWT_SECRET,
+          { expiresIn: "24h" }
+        );
+
+        // Return the token and shipper info to the client
+        res.json({
+          token,
+          shipper: existingShipper.toJSON(),
+        });
       }
     }
-
-    // // Create and sign a token
-    // const token = jwt.sign(
-    //   {
-    //     phoneNumber: existingShipper.phoneNumber,
-    //     username: existingShipper.fullName,
-    //     shipperId: existingShipper._id,
-    //   },
-    //   process.env.JWT_SECRET,
-    //   { expiresIn: "1h" }
-    // );
-
-    // // Return the token and shipper info to the client
-    // res.json({
-    //   token,
-    //   shipper: existingShipper.toJSON(),
-    // });
   } catch (err) {
     res.status(500).json({ message: err.message });
   }
