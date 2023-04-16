@@ -1,44 +1,26 @@
 const { default: mongoose } = require("mongoose");
-const HistoryOrder = require("../models/heldOrderModel");
+const HistoryOrder = require("../models/historyModel");
+const order = require("../models/orderModel");
 
-// Create a history order for a shipper
-module.exports.createHistoryOrder = async (req, res) => {
-  const { orderId } = req.body;
-  const { shipperId } = req.params;
-  try {
-    const historyOrder = await HistoryOrder.create({
-      shipperId,
-      orders: [new mongoose.Types.ObjectId(orderId)],
-    });
-    res.json(historyOrder);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
-// Add an order to an existing history Order for a shipper
+// Add an order to an existing historyorder for a shipper
 module.exports.addToHistoryOrder = async (req, res) => {
   const { orderId } = req.body;
   const { shipperId } = req.params;
   try {
-    const historyOrder = await HistoryOrder.findOne({ shipperId });
+    let historyOrder = await HistoryOrder.findOne({ shipperId });
     if (!historyOrder) {
-      // create new historyOrder with the orderId
-      const newHistoryOrder = new HistoryOrder({
+      historyOrder = new HistoryOrder({
         shipperId,
         orders: [new mongoose.Types.ObjectId(orderId)],
       });
-      await newHistoryOrder.save();
-      return res.json(newHistoryOrder);
     } else {
-      // check if the orderId already exists in historyOrder
       if (historyOrder.orders.includes(orderId)) {
         return res.json(historyOrder);
       }
       historyOrder.orders.push(new mongoose.Types.ObjectId(orderId));
-      await historyOrder.save();
-      return res.json(historyOrder);
     }
+    await historyOrder.save();
+    res.json(historyOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

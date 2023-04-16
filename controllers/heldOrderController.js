@@ -2,44 +2,25 @@ const { default: mongoose } = require("mongoose");
 const HeldOrder = require("../models/heldOrderModel");
 const order = require("../models/orderModel");
 
-// Create a held order for a shipper
-module.exports.createHeldOrder = async (req, res) => {
-  const { orderId } = req.body;
-  const { shipperId } = req.params;
-  try {
-    const heldOrder = await HeldOrder.create({
-      shipperId,
-      orders: [new mongoose.Types.ObjectId(orderId)],
-    });
-    res.json(heldOrder);
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-};
-
 // Add an order to an existing held order for a shipper
 module.exports.addToHeldOrder = async (req, res) => {
   const { orderId } = req.body;
   const { shipperId } = req.params;
   try {
-    const heldOrder = await HeldOrder.findOne({ shipperId });
+    let heldOrder = await HeldOrder.findOne({ shipperId });
     if (!heldOrder) {
-      // create new heldOrder with the orderId
-      const newHeldOrder = new HeldOrder({
+      heldOrder = new HeldOrder({
         shipperId,
         orders: [new mongoose.Types.ObjectId(orderId)],
       });
-      await newHeldOrder.save();
-      return res.json(newHeldOrder);
     } else {
-      // check if the orderId already exists in heldOrder
       if (heldOrder.orders.includes(orderId)) {
         return res.json(heldOrder);
       }
       heldOrder.orders.push(new mongoose.Types.ObjectId(orderId));
-      await heldOrder.save();
-      return res.json(heldOrder);
     }
+    await heldOrder.save();
+    res.json(heldOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
