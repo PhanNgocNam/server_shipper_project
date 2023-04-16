@@ -1,5 +1,6 @@
 const { default: mongoose } = require("mongoose");
 const HeldOrder = require("../models/heldOrderModel");
+const order = require("../models/orderModel");
 
 // Create a held order for a shipper
 module.exports.createHeldOrder = async (req, res) => {
@@ -21,12 +22,24 @@ module.exports.addToHeldOrder = async (req, res) => {
   const { orderId } = req.body;
   const { shipperId } = req.params;
   try {
-    const heldOrder = await HeldOrder.findOneAndUpdate(
-      { shipperId },
-      { $push: { orders: new mongoose.Types.ObjectId(orderId) } },
-      { new: true }
-    );
-    res.json(heldOrder);
+    const heldOrder = await HeldOrder.findOne({ shipperId });
+    if (!heldOrder) {
+      // create new heldOrder with the orderId
+      const newHeldOrder = new HeldOrder({
+        shipperId,
+        orders: [new mongoose.Types.ObjectId(orderId)],
+      });
+      await newHeldOrder.save();
+      return res.json(newHeldOrder);
+    } else {
+      // check if the orderId already exists in heldOrder
+      if (heldOrder.orders.includes(orderId)) {
+        return res.json(heldOrder);
+      }
+      heldOrder.orders.push(new mongoose.Types.ObjectId(orderId));
+      await heldOrder.save();
+      return res.json(heldOrder);
+    }
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -60,6 +73,34 @@ module.exports.getHeldOrdersByShipperId = async (req, res) => {
       "orders"
     );
     res.json(heldOrders);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+// Update status of orders in a held order for a shipper
+module.exports.updateHeldOrderStatus = async (req, res) => {
+  const { shipperId, status } = req.body;
+  try {
+    const heldOrder = await HeldOrder.findOne({ shipperId }).populate("orders");
+
+    if (!heldOrder) {
+      return res.status(404).json({ message: "Không tìm thấy held order." });
+    }
+
+    heldOrder.orders.forEach(async (orderId) => {
+      try {
+        await order.findByIdAndUpdate(orderId, { status: status });
+      } catch (err) {
+        console.log(err);
+      }
+    });
+
+    heldOrder.set({ orders: [] });
+    heldOrder.status = status;
+    await heldOrder.save();
+
+    res.json({ message: "Cập nhật thành công." });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

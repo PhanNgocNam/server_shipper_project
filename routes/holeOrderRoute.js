@@ -6,11 +6,13 @@ const {
   addToHeldOrder,
   removeFromHeldOrder,
   getHeldOrdersByShipperId,
+  updateHeldOrderStatus,
 } = require("../controllers/heldOrderController");
 
 router.post("/createHeldOrder/:shipperId", createHeldOrder);
 router.put("/addHeldOrder/:shipperId", addToHeldOrder);
 router.delete("/removeHeldOrder", removeFromHeldOrder);
 router.get("/getHeldOrdersByShipperId/:shipperId", getHeldOrdersByShipperId);
+router.patch("/updateAll", updateHeldOrderStatus);
 
 module.exports = router;

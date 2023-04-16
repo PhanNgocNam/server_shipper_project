@@ -1,4 +1,3 @@
-// const order = require("../models/orderModel");
 const order = require("../models/orderModel");
 
 module.exports.addOneOrder = async (req, res) => {
@@ -14,11 +13,6 @@ module.exports.addOneOrder = async (req, res) => {
     weight,
   } = req.body;
   try {
-    // Kiểm tra shipper có tồn tại không
-    const shipper = await shipper.findById(shipperId);
-    if (!shipper) {
-      return res.status(400).json({ message: "Invalid shipper ID" });
-    }
     // Tạo mới đơn hàng
     const newOrder = new order({
       deliveryAddress,
@@ -30,9 +24,7 @@ module.exports.addOneOrder = async (req, res) => {
       dateDeliver,
       status,
       weight,
-      shipperId,
     });
-
     await newOrder.save();
     res.json({ message: "Success!" });
   } catch (err) {
@@ -43,7 +35,7 @@ module.exports.addOneOrder = async (req, res) => {
 module.exports.getListOrderByStatus = async (req, res) => {
   const { status } = req.query;
   try {
-    const listOrder = await Order.find({
+    const listOrder = await order.find({
       status: status,
     });
 
@@ -83,9 +75,29 @@ module.exports.getListOrderByStorage = async (req, res) => {
   }
 };
 
+// thay đổi status
+module.exports.changeOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    const foundOrder = await order.findOneAndUpdate(
+      { _id: id },
+      { status: status },
+      { new: true }
+    );
+    if (foundOrder) {
+      res.json(foundOrder);
+    } else {
+      res.json({ message: "Không tìm thấy đơn hàng." });
+    }
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+};
+
 module.exports.getAllOrder = async (req, res) => {
   try {
-    const listOrder = await Order.find();
+    const listOrder = await order.find();
     res.json(listOrder);
   } catch (err) {
     res.json({ message: err.message });

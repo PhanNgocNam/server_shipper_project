@@ -11,6 +11,7 @@ const adminRoute = require("./routes/adminRoute");
 const orderRoute = require("./routes/orderRoute");
 const shipperRoute = require("./routes/shipperRoute");
 const holeOrderRoute = require("./routes/holeOrderRoute");
+const historyOrderRoute = require("./routes/historyRoute");
 app.use(express.json());
 app.use(cors());
 
@@ -18,6 +19,8 @@ app.use("/auth/admin", adminRoute);
 app.use("/order", orderRoute);
 app.use("/shipper", shipperRoute);
 app.use("/holeOrder", holeOrderRoute);
+app.use("/historyOrder", historyOrderRoute);
+
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -30,7 +33,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://192.168.1.170:19000",
+    origin: "http://192.168.88.111:19000",
   },
 });
 
