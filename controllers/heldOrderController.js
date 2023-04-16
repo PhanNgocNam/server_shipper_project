@@ -69,15 +69,22 @@ module.exports.updateHeldOrderStatus = async (req, res) => {
       return res.status(404).json({ message: "Không tìm thấy held order." });
     }
 
-    heldOrder.orders.forEach(async (orderId) => {
-      try {
-        await order.findByIdAndUpdate(orderId, { status: status });
-      } catch (err) {
-        console.log(err);
-      }
-    });
+    // filter out non-existing order ids
+    const existingOrderIds = await order
+      .find({
+        _id: { $in: heldOrder.orders },
+      })
+      .distinct("_id");
+    heldOrder.orders = existingOrderIds;
+    await heldOrder.save();
 
-    heldOrder.set({ orders: [] });
+    // update status of orders in the held order
+    await order.updateMany(
+      { _id: { $in: existingOrderIds } },
+      { status: status }
+    );
+
+    // update status of held order
     heldOrder.status = status;
     await heldOrder.save();
 
