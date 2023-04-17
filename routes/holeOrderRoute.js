@@ -9,7 +9,7 @@ const {
   updateHeldOrderStatus,
 } = require("../controllers/heldOrderController");
 
-router.put("/addHeldOrder/:shipperId", addToHeldOrder);
+router.post("/addHeldOrder/:shipperId", addToHeldOrder);
 router.delete("/removeHeldOrder", removeFromHeldOrder);
 router.get("/getHeldOrdersByShipperId/:shipperId", getHeldOrdersByShipperId);
 router.patch("/updateAll", updateHeldOrderStatus);
