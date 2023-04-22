@@ -70,10 +70,17 @@ module.exports.updateHeldOrderStatus = async (req, res) => {
     }
 
     // update status of orders in the held order
-    const updatedOrders = await order.updateMany(
-      { _id: { $in: heldOrder.orders }, status: { $ne: status } },
-      { $set: { status: status } }
-    );
+    for (const orderId of heldOrder.orders) {
+      const foundOrder = await order.findOneAndUpdate(
+        { _id: orderId },
+        { status: status }
+      );
+    }
+
+    // const updatedOrders = await order.updateMany(
+    //   { _id: { $in: heldOrder.orders }, status: { $ne: status } },
+    //   { $set: { status: status } }
+    // );
 
     // update status of held order
     heldOrder.status = status;
