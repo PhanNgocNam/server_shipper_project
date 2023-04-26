@@ -7,22 +7,27 @@ module.exports.addToHeldOrder = async (req, res) => {
   const { orderId } = req.body;
   const { shipperId } = req.params;
   try {
-    let heldOrder = await HeldOrder.findOne({ shipperId });
-    if (!heldOrder) {
-      heldOrder = new HeldOrder({
-        shipperId,
-        orders: [new mongoose.Types.ObjectId(orderId)],
-      });
-    } else {
-      if (heldOrder.orders.includes(orderId)) {
-        return res.json(heldOrder);
+    const listOrders = await HeldOrder.findOne({ shipperId }).populate(
+      "orders"
+    );
+    if (listOrders.orders.length < 10) {
+      let heldOrder = await HeldOrder.findOne({ shipperId });
+      if (!heldOrder) {
+        heldOrder = new HeldOrder({
+          shipperId,
+          orders: [new mongoose.Types.ObjectId(orderId)],
+        });
+      } else {
+        if (heldOrder.orders.includes(orderId)) {
+          return res.json(heldOrder);
+        }
+        heldOrder.orders.push(new mongoose.Types.ObjectId(orderId));
       }
-      heldOrder.orders.push(new mongoose.Types.ObjectId(orderId));
-    }
-    await heldOrder.save();
-    res.json(heldOrder);
+      await heldOrder.save();
+      res.json(heldOrder);
+    } else res.status(400).json({ message: "Đủ" });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.status(400).json({ message: "Sai" });
   }
 };
 
@@ -39,6 +44,8 @@ module.exports.removeFromHeldOrder = async (req, res) => {
     if (!heldOrder) {
       res.status(404).json({ message: "Held order not found." });
     } else {
+      // gửi một socket cho admin
+
       res.json(heldOrder);
     }
   } catch (err) {
@@ -49,6 +56,7 @@ module.exports.removeFromHeldOrder = async (req, res) => {
 // Get all held orders for a shipper
 module.exports.getHeldOrdersByShipperId = async (req, res) => {
   const { shipperId } = req.params;
+
   try {
     const heldOrders = await HeldOrder.findOne({ shipperId }).populate(
       "orders"

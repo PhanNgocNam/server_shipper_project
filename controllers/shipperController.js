@@ -30,8 +30,7 @@ module.exports.addOneShipper = async (req, res) => {
     await newShipper.save();
 
     // Perform sign-up logic here
-
-    const token = jwt.sign({ id: newShipper._id }, process.env.JWT_SECRET_KEY);
+    const token = jwt.sign({ id: newShipper._id }, process.env.JWT_SECRET);
 
     res.status(201).json({ token });
   } catch (err) {
@@ -50,7 +49,6 @@ module.exports.getAllShippers = async (req, res) => {
 
 module.exports.shipperLogin = async (req, res) => {
   const { phoneNumber, password } = req.body;
-
   try {
     // Check if shipper exists
     const existingShipper = await shipper.findOne({ phoneNumber });
@@ -75,7 +73,6 @@ module.exports.shipperLogin = async (req, res) => {
           process.env.JWT_SECRET,
           { expiresIn: "24h" }
         );
-
         // Return the token and shipper info to the client
         res.json({
           token,

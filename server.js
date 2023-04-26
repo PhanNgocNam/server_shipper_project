@@ -13,6 +13,7 @@ const shipperRoute = require("./routes/shipperRoute");
 const holeOrderRoute = require("./routes/holeOrderRoute");
 const historyOrderRoute = require("./routes/historyRoute");
 app.use(express.json());
+const socketIO = require("./socket");
 app.use(cors());
 
 app.use("/auth/admin", adminRoute);
@@ -33,16 +34,9 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://192.168.88.111:19000",
+    origin: "http://192.168.1.116:19000",
   },
 });
-
-io.on("connection", (socket) => {
-  console.log("New connection from: " + socket.id);
-
-  socket.on("track_location", (data) => {
-    console.log(data);
-  });
-});
+// socketIO(io);
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
