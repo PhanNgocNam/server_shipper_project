@@ -14,11 +14,6 @@ module.exports.addOneOrder = async (req, res) => {
     weight,
   } = req.body;
   try {
-    // Kiểm tra shipper có tồn tại không
-    const shipper = await shipper.findById(shipperId);
-    if (!shipper) {
-      return res.status(400).json({ message: "Invalid shipper ID" });
-    }
     // Tạo mới đơn hàng
     const newOrder = new order({
       deliveryAddress,
@@ -30,11 +25,10 @@ module.exports.addOneOrder = async (req, res) => {
       dateDeliver,
       status,
       weight,
-      shipperId,
     });
 
     await newOrder.save();
-    res.json({ message: "Success!" });
+    res.json({ status: "success", message: "Success!" });
   } catch (err) {
     res.json({ message: err.message });
   }
@@ -85,9 +79,43 @@ module.exports.getListOrderByStorage = async (req, res) => {
 
 module.exports.getAllOrder = async (req, res) => {
   try {
-    const listOrder = await Order.find();
+    const listOrder = await order.find();
     res.json(listOrder);
   } catch (err) {
     res.json({ message: err.message });
+  }
+};
+
+module.exports.updateOneOrder = async (req, res) => {
+  const { deliveryAddress, phoneReceive, storage, coords, orderName, weight } =
+    req.body;
+  try {
+    let targetOrder = await order.findOne({ _id: req.params.id });
+    targetOrder.deliveryAddress = deliveryAddress;
+    targetOrder.storage = storage;
+    targetOrder.orderName = orderName;
+    targetOrder.phoneReceive = phoneReceive;
+    targetOrder.weight = weight;
+    targetOrder.coords = coords;
+    await targetOrder.save();
+    res.json({ status: "success", order: targetOrder });
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+};
+
+module.exports.deleteOneOrder = async (req, res) => {
+  try {
+    const deleteOrder = await order.findByIdAndDelete(req.params.id);
+    if (!deleteOrder) {
+      return res.status(404).json({ message: "Không tìm thấy order" });
+    }
+    res.json({
+      status: "success",
+      message: "Xóa đon hàng thành công",
+      data: deleteOrder,
+    });
+  } catch (err) {
+    res.status(500).json({ status: "failure", message: err.message });
   }
 };

@@ -12,6 +12,7 @@ module.exports.addOneShipper = async (req, res) => {
     cccdURL,
     blxURL,
   } = req.body;
+
   try {
     const salt = await bcrypt.genSalt(10);
     const hashedPassword = await bcrypt.hash(phoneNumber, salt);
@@ -26,16 +27,26 @@ module.exports.addOneShipper = async (req, res) => {
       blxURL,
       password: hashedPassword,
     });
-
     await newShipper.save();
-
-    // Perform sign-up logic here
-
     const token = jwt.sign({ id: newShipper._id }, process.env.JWT_SECRET_KEY);
-
     res.status(201).json({ token });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    res.json({ message: err.message });
+  }
+};
+
+module.exports.updateShiper = async (req, res) => {
+  try {
+    let targetShipper = await shipper.findOne({ _id: req.params.id });
+    targetShipper.fullName = req.body.fullName;
+    targetShipper.storage = req.body.storage;
+    targetShipper.license = req.body.license;
+    targetShipper.phoneNumber = req.body.phoneNumber;
+    targetShipper.password = req.body.password;
+    await targetShipper.save();
+    res.json({ status: "success", shiper: targetShipper });
+  } catch (err) {
+    res.json(err.message);
   }
 };
 
@@ -115,8 +126,12 @@ module.exports.deleteShipperById = async (req, res) => {
     if (!deletedShipper) {
       return res.status(404).json({ message: "Không tìm thấy shipper" });
     }
-    res.json({ message: "Xóa shipper thành công", data: deletedShipper });
+    res.json({
+      status: "success",
+      message: "Xóa shipper thành công",
+      data: deletedShipper,
+    });
   } catch (err) {
-    res.status(500).json({ message: err.message });
+    res.status(500).json({ status: "failure", message: err.message });
   }
 };

@@ -6,6 +6,8 @@ const {
   getAllOrder,
   getListOrderByStorage,
   getOrderByOrderId,
+  updateOneOrder,
+  deleteOneOrder,
 } = require("../controllers/orderController");
 
 router.post("/new", addOneOrder);
@@ -13,5 +15,7 @@ router.get("/getAllOrder", getAllOrder);
 router.get("/listOrderStatus", getListOrderByStatus);
 router.get("/id/:id", getOrderByOrderId);
 router.get("/getListOrderByStorage/:storage", getListOrderByStorage);
+router.put("/updateOneOrder/:id", updateOneOrder);
+router.delete("/deleteOneOrder/:id", deleteOneOrder);
 
 module.exports = router;
