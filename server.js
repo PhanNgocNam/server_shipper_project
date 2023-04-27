@@ -11,13 +11,17 @@ const adminRoute = require("./routes/adminRoute");
 const orderRoute = require("./routes/orderRoute");
 const shipperRoute = require("./routes/shipperRoute");
 const holeOrderRoute = require("./routes/holeOrderRoute");
+const historyOrderRoute = require("./routes/historyRoute");
 app.use(express.json());
+const socketIO = require("./socket");
 app.use(cors());
 
 app.use("/auth/admin", adminRoute);
 app.use("/order", orderRoute);
 app.use("/shipper", shipperRoute);
 app.use("/holeOrder", holeOrderRoute);
+app.use("/historyOrder", historyOrderRoute);
+
 mongoose
   .connect(process.env.MONGO_URL, {
     useNewUrlParser: true,
@@ -33,6 +37,7 @@ const io = new Server(server, {
     origin: [
       `http://${process.env.CLIENT_HOST}:${process.env.CLIENT_PORT}`,
       "http://localhost:3000",
+      "http://192.168.1.116:19000",
     ],
   },
 });

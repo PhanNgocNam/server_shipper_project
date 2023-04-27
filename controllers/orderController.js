@@ -1,4 +1,3 @@
-// const order = require("../models/orderModel");
 const order = require("../models/orderModel");
 
 module.exports.addOneOrder = async (req, res) => {
@@ -26,7 +25,6 @@ module.exports.addOneOrder = async (req, res) => {
       status,
       weight,
     });
-
     await newOrder.save();
     res.json({ status: "success", message: "Success!" });
   } catch (err) {
@@ -37,7 +35,7 @@ module.exports.addOneOrder = async (req, res) => {
 module.exports.getListOrderByStatus = async (req, res) => {
   const { status } = req.query;
   try {
-    const listOrder = await Order.find({
+    const listOrder = await order.find({
       status: status,
     });
 
@@ -72,6 +70,26 @@ module.exports.getListOrderByStorage = async (req, res) => {
     });
 
     res.json(listOrder);
+  } catch (err) {
+    res.json({ message: err.message });
+  }
+};
+
+// thay đổi status
+module.exports.changeOrderStatus = async (req, res) => {
+  const { id } = req.params;
+  const { status } = req.body;
+  try {
+    const foundOrder = await order.findOneAndUpdate(
+      { _id: id },
+      { status: status },
+      { new: true }
+    );
+    if (foundOrder) {
+      res.json(foundOrder);
+    } else {
+      res.json({ message: "Không tìm thấy đơn hàng." });
+    }
   } catch (err) {
     res.json({ message: err.message });
   }

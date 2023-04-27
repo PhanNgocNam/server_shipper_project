@@ -8,6 +8,7 @@ const {
   getOrderByOrderId,
   updateOneOrder,
   deleteOneOrder,
+  changeOrderStatus,
 } = require("../controllers/orderController");
 
 router.post("/new", addOneOrder);
@@ -17,5 +18,6 @@ router.get("/id/:id", getOrderByOrderId);
 router.get("/getListOrderByStorage/:storage", getListOrderByStorage);
 router.put("/updateOneOrder/:id", updateOneOrder);
 router.delete("/deleteOneOrder/:id", deleteOneOrder);
+router.patch("/idChange/:id/", changeOrderStatus);
 
 module.exports = router;
