@@ -14,6 +14,7 @@ const holeOrderRoute = require("./routes/holeOrderRoute");
 const historyOrderRoute = require("./routes/historyRoute");
 app.use(express.json());
 const socketIO = require("./socket");
+
 app.use(cors());
 
 app.use("/auth/admin", adminRoute);

@@ -10,7 +10,12 @@ module.exports.addToHeldOrder = async (req, res) => {
     const listOrders = await HeldOrder.findOne({ shipperId }).populate(
       "orders"
     );
-    if (listOrders.orders.length < 10) {
+    if (listOrders == null) {
+      const heldOrder = await HeldOrder.create({
+        shipperId,
+        orders: [new mongoose.Types.ObjectId(orderId)],
+      });
+    } else if (listOrders.orders.length < 10) {
       let heldOrder = await HeldOrder.findOne({ shipperId });
       if (!heldOrder) {
         heldOrder = new HeldOrder({
@@ -27,7 +32,7 @@ module.exports.addToHeldOrder = async (req, res) => {
       res.json(heldOrder);
     } else res.status(400).json({ message: "Đủ" });
   } catch (err) {
-    res.status(400).json({ message: "Sai" });
+    res.status(400).json({ message: err.message });
   }
 };
 

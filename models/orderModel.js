@@ -29,7 +29,7 @@ const orderSchema = new mongoose.Schema({
   },
   status: {
     type: String,
-    default: "inProgress",
+    default: "chuanhan",
   },
 
   dateAdded: {
