@@ -7,24 +7,17 @@ module.exports.addToHistoryOrder = async (req, res) => {
   const { orderId } = req.body;
   const { shipperId } = req.params;
   try {
-    let historyOrder = await HistoryOrder.findOne({ shipperId });
-    if (!historyOrder) {
-      historyOrder = new HistoryOrder({
-        shipperId,
-        orders: [new mongoose.Types.ObjectId(orderId)],
-      });
-    } else {
-      if (historyOrder.orders.includes(orderId)) {
-        return res.json(historyOrder);
-      }
-      historyOrder.orders.push(new mongoose.Types.ObjectId(orderId));
-    }
-    await historyOrder.save();
+    let historyOrder = await HistoryOrder.findOneAndUpdate(
+      { shipperId },
+      { $addToSet: { orders: orderId } },
+      { new: true, upsert: true }
+    );
     res.json(historyOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
 };
+
 // Remove an order from a history Order for a shipper
 module.exports.removeFromHistoryOrder = async (req, res) => {
   const { orderId } = req.params;

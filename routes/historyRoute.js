@@ -7,7 +7,7 @@ const {
   removeFromHistoryOrder,
 } = require("../controllers/historyController");
 
-router.put("/addToHistoryOrder/:shipperId", addToHistoryOrder);
+router.post("/addToHistoryOrder/:shipperId", addToHistoryOrder);
 router.delete("/removeFromHistoryOrder", removeFromHistoryOrder);
 router.get(
   "/getHistoryOrderByShipperId/:shipperId",

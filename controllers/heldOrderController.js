@@ -10,27 +10,22 @@ module.exports.addToHeldOrder = async (req, res) => {
     const listOrders = await HeldOrder.findOne({ shipperId }).populate(
       "orders"
     );
-    if (listOrders == null) {
+    if (!listOrders) {
       const heldOrder = await HeldOrder.create({
         shipperId,
-        orders: [new mongoose.Types.ObjectId(orderId)],
+        orders: [orderId],
       });
-    } else if (listOrders.orders.length < 10) {
-      let heldOrder = await HeldOrder.findOne({ shipperId });
-      if (!heldOrder) {
-        heldOrder = new HeldOrder({
-          shipperId,
-          orders: [new mongoose.Types.ObjectId(orderId)],
-        });
-      } else {
-        if (heldOrder.orders.includes(orderId)) {
-          return res.json(heldOrder);
-        }
-        heldOrder.orders.push(new mongoose.Types.ObjectId(orderId));
-      }
-      await heldOrder.save();
-      res.json(heldOrder);
-    } else res.status(400).json({ message: "Đủ" });
+      return res.json(heldOrder);
+    }
+    if (listOrders.orders.includes(orderId)) {
+      return res.json(listOrders);
+    }
+    if (listOrders.orders.length >= 10) {
+      return res.status(400).json({ message: "Đủ" });
+    }
+    listOrders.orders.push(orderId);
+    await listOrders.save();
+    res.json(listOrders);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -89,11 +84,6 @@ module.exports.updateHeldOrderStatus = async (req, res) => {
         { status: status }
       );
     }
-
-    // const updatedOrders = await order.updateMany(
-    //   { _id: { $in: heldOrder.orders }, status: { $ne: status } },
-    //   { $set: { status: status } }
-    // );
 
     // update status of held order
     heldOrder.status = status;
