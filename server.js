@@ -35,7 +35,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "http://192.168.88.111:19000",
+    origin: ["http://192.168.88.111:19000", "http://localhost:3000"],
   },
 });
 let shipperData = [];

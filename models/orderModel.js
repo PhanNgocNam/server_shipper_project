@@ -33,12 +33,14 @@ const orderSchema = new mongoose.Schema({
   },
 
   dateAdded: {
-    type: Date,
-    default: Date.now,
+    type: String,
+    default: new Date().toISOString().substring(0, 10),
   },
   dateDeliver: {
     type: Date,
-    default: Date.now,
+    default: function () {
+      return new Date(this.dateAdded);
+    },
   },
   weight: {
     type: Number,

@@ -50,3 +50,35 @@ module.exports.getHistoryOrderByShipperId = async (req, res) => {
     res.status(400).json({ message: err.message });
   }
 };
+
+module.exports.getHistoryOrderByShipperIdAndDate = async (req, res) => {
+  const { shipperId } = req.params;
+  const dateAdded = req.query.dateAdded;
+
+  try {
+    const historyOrder = await HistoryOrder.findOne({ shipperId }).populate(
+      "orders"
+    );
+    if (!historyOrder) {
+      return res.json({ message: "Không tìm thấy shiper!" });
+    }
+
+    const dataInDate = historyOrder.orders.filter(
+      (or) => or.dateAdded === dateAdded
+    );
+    const numOfTotal = dataInDate.length;
+    const numOfSucess = dataInDate.filter(
+      (or) => or.status === "thanhcong"
+    ).length;
+    const numOfFailure = dataInDate.filter(
+      (or) => or.status === "thatbai"
+    ).length;
+    const numOfInHold = dataInDate.filter(
+      (or) => or.status === "tamgiu"
+    ).length;
+
+    res.json({ numOfTotal, numOfSucess, numOfFailure, numOfInHold });
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
