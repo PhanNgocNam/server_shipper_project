@@ -33,19 +33,17 @@ module.exports.addToHeldOrder = async (req, res) => {
 
 // Remove an order from a held order for a shipper
 module.exports.removeFromHeldOrder = async (req, res) => {
-  const { orderId } = req.params;
-  const { shipperId } = req.query;
+  const { orderId } = req.body;
+  const { shipperId } = req.params;
   try {
     const heldOrder = await HeldOrder.findOneAndUpdate(
       { shipperId },
-      { $pull: { orders: { orderId } } },
+      { $pull: { orders: orderId } },
       { new: true }
     );
     if (!heldOrder) {
       res.status(404).json({ message: "Held order not found." });
     } else {
-      // gửi một socket cho admin
-
       res.json(heldOrder);
     }
   } catch (err) {
