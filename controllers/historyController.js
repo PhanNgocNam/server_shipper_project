@@ -38,7 +38,7 @@ module.exports.removeFromHistoryOrder = async (req, res) => {
   }
 };
 
-// Get all held orders for a shipper
+// Get all history orders for a shipper
 module.exports.getHistoryOrderByShipperId = async (req, res) => {
   const { shipperId } = req.params;
   try {
