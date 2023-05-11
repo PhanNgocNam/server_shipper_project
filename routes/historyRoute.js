@@ -6,6 +6,7 @@ const {
   addToHistoryOrder,
   removeFromHistoryOrder,
   getHistoryOrderByShipperIdAndDate,
+  getSalarry,
 } = require("../controllers/historyController");
 
 router.post("/addToHistoryOrder/:shipperId", addToHistoryOrder);
@@ -18,5 +19,6 @@ router.get(
   `/getHistoryOrderByShipperIdAndDate/:shipperId`,
   getHistoryOrderByShipperIdAndDate
 );
+router.get(`/getSallary/:shipperId`, getSalarry);
 
 module.exports = router;

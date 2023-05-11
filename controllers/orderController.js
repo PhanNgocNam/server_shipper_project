@@ -26,7 +26,7 @@ module.exports.addOneOrder = async (req, res) => {
       weight,
     });
     await newOrder.save();
-    res.json({ status: "success", message: "Success!" });
+    res.json({ newOrder, message: "Success!" });
   } catch (err) {
     res.json({ message: err.message });
   }

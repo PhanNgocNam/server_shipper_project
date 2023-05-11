@@ -1,3 +1,4 @@
+const moment = require("moment");
 const mongoose = require("mongoose");
 
 const orderSchema = new mongoose.Schema({
@@ -31,16 +32,13 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: "chuanhan",
   },
-
   dateAdded: {
     type: String,
-    default: new Date().toISOString().substring(0, 10),
+    default: moment().format("DD/MM/YYYY HH:mm"),
   },
   dateDeliver: {
-    type: Date,
-    default: function () {
-      return new Date(this.dateAdded);
-    },
+    type: String,
+    default: this.dateAdded,
   },
   weight: {
     type: Number,
