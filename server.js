@@ -24,10 +24,13 @@ app.use("/holeOrder", holeOrderRoute);
 app.use("/historyOrder", historyOrderRoute);
 
 mongoose
-  .connect(process.env.MONGO_URL, {
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
-  })
+  .connect(
+    "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
+    {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    }
+  )
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err.message));
 
@@ -35,7 +38,11 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://192.168.88.111:19000", "http://localhost:3000"],
+    origin: [
+      "http://192.168.88.111:19000",
+      "http://localhost:3000",
+      "https://gobadelivery.netlify.app",
+    ],
   },
 });
 let shipperData = [];
@@ -60,17 +67,14 @@ io.on("connection", (socket) => {
   });
 
   socket.on("foregroundMode", (data) => {
-    // if (shipperData.length >= 0) {
     const index = shipperData.findIndex(
       (shipper) => shipper.shipperID === data
     );
     if (index !== -1) {
       shipperData.splice(index, 1);
     }
-    // console.log(updateShipperLocation);
 
     socket.broadcast.emit("receive-location", shipperData);
-    // }
   });
 
   socket.on("disconnect", (data) => {

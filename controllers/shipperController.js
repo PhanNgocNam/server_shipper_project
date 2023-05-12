@@ -32,7 +32,7 @@ module.exports.addOneShipper = async (req, res) => {
     // Perform sign-up logic here
     const token = jwt.sign({ id: newShipper._id }, process.env.JWT_SECRET);
 
-    res.status(201).json({ token });
+    res.status(201).json({ status: "success", token });
   } catch (err) {
     res.json({ message: err.message });
   }

@@ -73,11 +73,8 @@ module.exports.getHistoryOrderByShipperIdAndDate = async (req, res) => {
     const numOfFailure = dataInDate.filter(
       (or) => or.status === "thatbai"
     ).length;
-    const numOfInHold = dataInDate.filter(
-      (or) => or.status === "tamgiu"
-    ).length;
 
-    res.json({ numOfTotal, numOfSucess, numOfFailure, numOfInHold });
+    res.json({ numOfTotal, numOfSucess, numOfFailure });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }

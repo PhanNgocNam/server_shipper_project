@@ -6,8 +6,8 @@ module.exports.login = async (req, res, next) => {
     const { username, password } = req.body;
 
     const admin = await adminUser.findOne({ username });
-    // const checkPassResult = await bcrypt.compare(password, admin.password);
-    const checkPassResult = true;
+    const checkPassResult = await bcrypt.compare(password, admin.password);
+    // const checkPassResult = true;
 
     if (!admin) {
       return res.json({ message: "Tên đằng nhập không đúng!", status: false });
