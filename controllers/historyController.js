@@ -51,6 +51,7 @@ module.exports.getHistoryOrderByShipperId = async (req, res) => {
     const historyOrder = await HistoryOrder.findOne({ shipperId }).populate(
       "orders"
     );
+    console.log(historyOrder);
     res.json(historyOrder);
   } catch (err) {
     res.status(400).json({ message: err.message });

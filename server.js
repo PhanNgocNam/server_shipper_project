@@ -35,7 +35,7 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: ["http://192.168.88.111:19000", "http://localhost:3000"],
+    origin: ["http://192.168.1.131:19000", "http://localhost:3000"],
   },
 });
 let shipperData = [];
@@ -68,13 +68,22 @@ io.on("connection", (socket) => {
       shipperData.splice(index, 1);
     }
     // console.log(updateShipperLocation);
-
     socket.broadcast.emit("receive-location", shipperData);
     // }
   });
 
   socket.on("disconnect", (data) => {
     console.log(data);
+  });
+
+  // socket cập nhật order khi order trong kho thay đổi
+  socket.on("join_room", (shipper) => {
+    socket.join(shipper.storage);
+  });
+
+  socket.on("change_order_list", (room_id) => {
+    console.log(room_id);
+    socket.to(room_id).emit("update_order_list");
   });
 });
 
