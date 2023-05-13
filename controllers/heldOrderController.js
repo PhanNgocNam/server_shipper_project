@@ -1,6 +1,7 @@
 const { default: mongoose } = require("mongoose");
 const HeldOrder = require("../models/heldOrderModel");
 const order = require("../models/orderModel");
+const ObjectId = require("mongoose").Types.ObjectId;
 
 // Add an order to an existing held order for a shipper
 module.exports.addToHeldOrder = async (req, res) => {
@@ -22,10 +23,11 @@ module.exports.addToHeldOrder = async (req, res) => {
     }
     if (listOrders.orders.length >= 10) {
       return res.status(400).json({ message: "Đủ" });
+    } else {
+      listOrders.orders.push(orderId);
+      await listOrders.save();
+      res.json(listOrders);
     }
-    listOrders.orders.push(orderId);
-    await listOrders.save();
-    res.json(listOrders);
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -33,21 +35,21 @@ module.exports.addToHeldOrder = async (req, res) => {
 
 // Remove an order from a held order for a shipper
 module.exports.removeFromHeldOrder = async (req, res) => {
-  const { orderId } = req.body;
-  const { shipperId } = req.params;
+  const { shipperId, orderId } = req.params;
+
   try {
-    const heldOrder = await HeldOrder.findOneAndUpdate(
+    const result = await HeldOrder.findOneAndUpdate(
       { shipperId },
-      { $pull: { orders: orderId } },
+      { $pull: { orders: new ObjectId(orderId) } },
       { new: true }
     );
-    if (!heldOrder) {
-      res.status(404).json({ message: "Held order not found." });
-    } else {
-      res.json(heldOrder);
+
+    if (result) {
+      return res.json(result);
     }
+    return res.status(400).json({ message: "false" });
   } catch (err) {
-    res.status(400).json({ message: err.message });
+    return res.status(400).json({ message: err.message });
   }
 };
 

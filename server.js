@@ -25,7 +25,8 @@ app.use("/historyOrder", historyOrderRoute);
 
 mongoose
   .connect(
-    "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
+    // "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
+    process.env.MONGO_URL,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -39,7 +40,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://192.168.88.111:19000",
+      "http://192.168.1.8:19000",
       "http://localhost:3000",
       "https://gobadelivery.netlify.app",
     ],
@@ -56,10 +57,10 @@ io.on("connection", (socket) => {
 
     if (index !== -1) {
       shipperData.splice(index, 1, data);
-      console.log("Đã thay thế bằng location mới nhất!");
+      // console.log("Đã thay thế bằng location mới nhất!");
     } else {
       shipperData.push(data);
-      console.log("Shipper đã được thêm vào List!");
+      // console.log("Shipper đã được thêm vào List!");
     }
 
     console.log(shipperData);
@@ -79,6 +80,16 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect", (data) => {
     console.log(data);
+  });
+
+  // socket cập nhật order khi order trong kho thay đổi
+  socket.on("join_room", (shipper) => {
+    socket.join(shipper.storage);
+  });
+
+  socket.on("change_order_list", (room_id) => {
+    // console.log(room_id);
+    socket.to(room_id).emit("update_order_list");
   });
 });
 

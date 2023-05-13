@@ -12,7 +12,7 @@ const heldOrderSchema = new mongoose.Schema({
   },
   orders: {
     type: [mongoose.Schema.Types.ObjectId],
-    validate: [(orders) => orders.length <= 10, "Maximum held orders is 10"],
+    // validate: [(orders) => orders.length <= 10, "Maximum held orders is 10"],
     ref: "order",
     required: true,
   },
