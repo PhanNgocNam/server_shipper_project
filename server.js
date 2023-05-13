@@ -25,8 +25,8 @@ app.use("/historyOrder", historyOrderRoute);
 
 mongoose
   .connect(
-    "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
-    // process.env.MONGO_URL,
+    // "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
+    process.env.MONGO_URL,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
@@ -40,9 +40,10 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://192.168.1.8:19000",
+      "http://192.168.99.251:19000",
       "http://localhost:3000",
       "https://gobadelivery.netlify.app",
+      process.env.WEB_CLIENT_URL,
     ],
   },
 });
@@ -57,10 +58,8 @@ io.on("connection", (socket) => {
 
     if (index !== -1) {
       shipperData.splice(index, 1, data);
-      // console.log("Đã thay thế bằng location mới nhất!");
     } else {
       shipperData.push(data);
-      // console.log("Shipper đã được thêm vào List!");
     }
 
     console.log(shipperData);
