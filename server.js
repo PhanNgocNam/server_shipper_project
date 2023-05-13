@@ -25,8 +25,8 @@ app.use("/historyOrder", historyOrderRoute);
 
 mongoose
   .connect(
-    // "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
-    process.env.MONGO_URL,
+    "mongodb+srv://PhanNgocNam:RlTOgJO4X2hnMMPq@cluster0.stuv011.mongodb.net/",
+    // process.env.MONGO_URL,
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,
