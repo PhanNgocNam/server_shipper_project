@@ -39,7 +39,12 @@ const server = http.createServer(app);
 
 const io = new Server(server, {
   cors: {
-    origin: "*",
+    origin: [
+      "http://172.20.34.82:19000",
+      "http://localhost:3000",
+      "https://gobadelivery.netlify.app",
+      process.env.WEB_CLIENT_URL,
+    ],
   },
 });
 let shipperData = [];
