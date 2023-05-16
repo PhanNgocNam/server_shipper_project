@@ -38,8 +38,6 @@ module.exports.addOneShipper = async (req, res) => {
   }
 };
 
-<<<<<<< HEAD
-=======
 module.exports.updateShiper = async (req, res) => {
   try {
     let targetShipper = await shipper.findOne({ _id: req.params.id });
@@ -55,7 +53,6 @@ module.exports.updateShiper = async (req, res) => {
   }
 };
 
->>>>>>> 52f12405eec439ea41a9c1b84ebbb94a326e0359
 module.exports.getAllShippers = async (req, res) => {
   try {
     const shippers = await shipper.find();
@@ -64,8 +61,6 @@ module.exports.getAllShippers = async (req, res) => {
     res.json({ message: err.message });
   }
 };
-<<<<<<< HEAD
-=======
 
 module.exports.shipperLogin = async (req, res) => {
   const { phoneNumber, password } = req.body;
@@ -141,4 +136,3 @@ module.exports.deleteShipperById = async (req, res) => {
     res.status(500).json({ status: "failure", message: err.message });
   }
 };
->>>>>>> 52f12405eec439ea41a9c1b84ebbb94a326e0359
