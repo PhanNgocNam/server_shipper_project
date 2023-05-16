@@ -65,7 +65,7 @@ module.exports.getHeldOrdersByShipperId = async (req, res) => {
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
-};
+}; 
 
 // Update status of orders in a held order for a shipper
 module.exports.updateHeldOrderStatus = async (req, res) => {
