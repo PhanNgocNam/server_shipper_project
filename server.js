@@ -24,13 +24,10 @@ app.use("/holeOrder", holeOrderRoute);
 app.use("/historyOrder", historyOrderRoute);
 
 mongoose
-  .connect(
-    process.env.MONGO_URL,
-    {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    }
-  )
+  .connect(process.env.MONGO_URL, {
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+  })
   .then(() => console.log("Connected to MongoDB"))
   .catch((err) => console.log(err.message));
 
@@ -39,9 +36,9 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://192.168.99.251:19000",
+      "http://10.100.46.30:19000",
       "http://localhost:3000",
-      "https://gobadelivery.netlify.app",
+      // "https://gobadelivery.netlify.app",
       process.env.WEB_CLIENT_URL,
     ],
   },
@@ -89,6 +86,11 @@ io.on("connection", (socket) => {
     // console.log(room_id);
     socket.to(room_id).emit("update_order_list");
   });
+
+  // socket.on("return_order", (room_id) => {
+  //    console.log(room_id);
+  //   socket.to(room_id).emit("update_order_list");
+  // })
 });
 
 server.listen(PORT, () => console.log(`Server running on port ${PORT}...`));
