@@ -227,7 +227,7 @@ module.exports.getHistoryOrderBetweenTwoDate = async (req, res) => {
 module.exports.getSalarry = async (req, res) => {
   const { shipperId } = req.params;
   const month = req.query.month;
-  let salarry = 10000;
+  let salarry = 0;
   let minWeight = 0;
   let mediumWeight = 0;
   let maxWeight = 0;
