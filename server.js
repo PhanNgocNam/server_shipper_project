@@ -36,7 +36,7 @@ const server = http.createServer(app);
 const io = new Server(server, {
   cors: {
     origin: [
-      "http://10.100.46.30:19000",
+      "http://192.168.1.102:19000",
       "http://localhost:3000",
       // "https://gobadelivery.netlify.app",
       process.env.WEB_CLIENT_URL,
