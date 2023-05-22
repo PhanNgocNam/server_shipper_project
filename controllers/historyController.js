@@ -227,10 +227,11 @@ module.exports.getHistoryOrderBetweenTwoDate = async (req, res) => {
 module.exports.getSalarry = async (req, res) => {
   const { shipperId } = req.params;
   const month = req.query.month;
-  let salarry = 5000000;
+  let salarry = 10000;
   let minWeight = 0;
   let mediumWeight = 0;
   let maxWeight = 0;
+  let sumWeight = 0;
   try {
     const historyOrder = await HistoryOrder.findOne({ shipperId }).populate({
       path: "orders",
@@ -249,13 +250,16 @@ module.exports.getSalarry = async (req, res) => {
         if (item.weight < 5) {
           salarry = salarry + 1000;
           minWeight = minWeight + 1;
+          sumWeight = sumWeight + item.weight;
         }
         if (item.weight < 5 && item.weight < 10) {
           salarry = salarry + 2000;
           mediumWeight = mediumWeight + 1;
+          sumWeight = sumWeight + item.weight;
         } else {
           salarry = salarry + 5000;
           maxWeight = maxWeight + 1;
+          sumWeight = sumWeight + item.weight;
         }
       });
 
@@ -269,7 +273,14 @@ module.exports.getSalarry = async (req, res) => {
       return Number(month) === monthDelivered;
     }).length;
 
-    res.json({ salarry, maxWeight, minWeight, mediumWeight, numOfFailure });
+    res.json({
+      salarry,
+      maxWeight,
+      minWeight,
+      mediumWeight,
+      numOfFailure,
+      sumWeight,
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
