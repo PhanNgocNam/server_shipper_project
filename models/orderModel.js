@@ -44,6 +44,10 @@ const orderSchema = new mongoose.Schema({
     type: String,
     default: this.dateAdded,
   },
+  dateForSta: {
+    type: Date,
+    // default: Date.now(),
+  },
   weight: {
     type: Number,
     required: true,

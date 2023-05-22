@@ -25,7 +25,8 @@ app.use("/historyOrder", historyOrderRoute);
 
 mongoose
   .connect(
-    process.env.MONGO_URL,
+    // process.env.MONGO_URL,
+    "mongodb://localhost/shipper_project",
     {
       useNewUrlParser: true,
       useUnifiedTopology: true,

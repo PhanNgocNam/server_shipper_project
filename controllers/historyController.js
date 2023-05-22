@@ -2,6 +2,7 @@ const { default: mongoose } = require("mongoose");
 const HistoryOrder = require("../models/historyModel");
 const order = require("../models/orderModel");
 const moment = require("moment");
+const historyModel = require("../models/historyModel");
 
 // Add an order to an existing historyorder for a shipper
 module.exports.addToHistoryOrder = async (req, res) => {
@@ -18,6 +19,12 @@ module.exports.addToHistoryOrder = async (req, res) => {
       {
         dateDeliver: moment().format("DD/MM/YYYY HH:mm"),
         dateDelivered: moment().format("YYYY-MM-DD"),
+        dateForSta: new Date(moment().format("YYYY-MM-DD")).setHours(
+          0,
+          0,
+          0,
+          0
+        ),
       },
       { new: true }
     );
@@ -54,8 +61,44 @@ module.exports.getHistoryOrderByShipperId = async (req, res) => {
     const historyOrder = await HistoryOrder.findOne({ shipperId }).populate(
       "orders"
     );
-    // console.log(historyOrder);
+
     res.json(historyOrder);
+  } catch (err) {
+    res.status(400).json({ message: err.message });
+  }
+};
+
+module.exports.getHistoryOrderByShipperIdForTableData = async (req, res) => {
+  const { shipperId } = req.params;
+  try {
+    const historyOrder = await HistoryOrder.findOne({ shipperId }).populate(
+      "orders"
+    );
+
+    const list = historyOrder.orders.map((order) => {
+      const {
+        orderName,
+        deliveryAddress,
+        phoneReceive,
+        storage,
+        weight,
+        status,
+        dateAdded,
+        dateDeliver,
+      } = order;
+      return {
+        orderName,
+        deliveryAddress,
+        phoneReceive,
+        storage,
+        weight,
+        status,
+        dateAdded,
+        dateDeliver,
+      };
+    });
+
+    res.json({ orders: list });
   } catch (err) {
     res.status(400).json({ message: err.message });
   }
@@ -63,7 +106,7 @@ module.exports.getHistoryOrderByShipperId = async (req, res) => {
 
 module.exports.getHistoryOrderByShipperIdAndDate = async (req, res) => {
   const { shipperId } = req.params;
-  const dateAdded = req.query.dateAdded; // 2023-12-05
+  const dateAdded2 = req.query.dateAdded; // 2023-12-05
 
   try {
     const historyOrder = await HistoryOrder.findOne({ shipperId }).populate(
@@ -74,7 +117,7 @@ module.exports.getHistoryOrderByShipperIdAndDate = async (req, res) => {
     }
 
     const dataInDate = historyOrder.orders.filter(
-      (or) => or.dateDelivered === dateAdded
+      (or) => or.dateDelivered === dateAdded2
     );
 
     const numOfTotal = dataInDate.length;
@@ -84,9 +127,99 @@ module.exports.getHistoryOrderByShipperIdAndDate = async (req, res) => {
     const numOfFailure = dataInDate.filter(
       (or) => or.status === "thatbai"
     ).length;
-    res.json({ numOfTotal, numOfSucess, numOfFailure });
+    res.json({
+      numOfTotal,
+      numOfSucess,
+      numOfFailure,
+      orders: dataInDate.map((order) => {
+        const {
+          orderName,
+          deliveryAddress,
+          phoneReceive,
+          storage,
+          weight,
+          status,
+          dateAdded,
+          dateDeliver,
+        } = order;
+        return {
+          orderName,
+          deliveryAddress,
+          phoneReceive,
+          storage,
+          weight,
+          status,
+          dateAdded,
+          dateDeliver,
+        };
+      }),
+    });
   } catch (err) {
     res.status(400).json({ message: err.message });
+  }
+};
+
+module.exports.getHistoryOrderBetweenTwoDate = async (req, res) => {
+  const { shipperId } = req.params;
+  const startDate = new Date(req.query.startDate).getTime();
+  const endDate = new Date(req.query.endDate).getTime();
+  try {
+    const historyOrder = await HistoryOrder.findOne({ shipperId }).populate(
+      "orders"
+    );
+    if (!historyOrder) {
+      return res.json({ message: "Không tìm thấy shiper!" });
+    }
+
+    const listOrderMatch = historyOrder.orders.filter(
+      (order) =>
+        order.dateForSta.getTime() >= startDate &&
+        order.dateForSta.getTime() <= endDate
+    );
+
+    const numOfTotal = listOrderMatch.length;
+    const numOfSucess = listOrderMatch.filter(
+      (or) => or.status === "thanhcong"
+    ).length;
+    const numOfFailure = listOrderMatch.filter(
+      (or) => or.status === "thatbai"
+    ).length;
+
+    if (listOrderMatch) {
+      return res.json({
+        numOfTotal,
+        numOfSucess,
+        numOfFailure,
+        orders: listOrderMatch.map((order) => {
+          const {
+            orderName,
+            deliveryAddress,
+            phoneReceive,
+            storage,
+            weight,
+            status,
+            dateAdded,
+            dateDeliver,
+          } = order;
+          return {
+            orderName,
+            deliveryAddress,
+            phoneReceive,
+            storage,
+            weight,
+            status,
+            dateAdded,
+            dateDeliver,
+          };
+        }),
+      });
+    } else {
+      return res.json(
+        "Không tìm thấy đơn hàng trong khoảng thời gian đã chọn!"
+      );
+    }
+  } catch (err) {
+    return res.json("Lỗi :" + err.message);
   }
 };
 
