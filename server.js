@@ -40,6 +40,7 @@ const io = new Server(server, {
       "http://localhost:3000",
       // "https://gobadelivery.netlify.app",
       process.env.WEB_CLIENT_URL,
+      "*"
     ],
   },
 });
