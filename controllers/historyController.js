@@ -252,7 +252,7 @@ module.exports.getSalarry = async (req, res) => {
           minWeight = minWeight + 1;
           sumWeight = sumWeight + item.weight;
         }
-        if (item.weight < 5 && item.weight < 10) {
+        if (item.weight > 5 && item.weight < 10) {
           salarry = salarry + 2000;
           mediumWeight = mediumWeight + 1;
           sumWeight = sumWeight + item.weight;
