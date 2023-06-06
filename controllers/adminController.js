@@ -50,15 +50,16 @@ module.exports.resetPassword = async (req, res) => {
 module.exports.register = async (req, res) => {
   const { username, password } = req.body;
   try {
-    // let newPassword = await bcrypt.hash(password, 10);
-
+    const checkUserExits = await adminUser.findOne({ username: username });
+    if (checkUserExits)
+      return res.json({ status: false, message: "Tên đăng nhập đã tồn tại." });
     const admin = new adminUser({
       username,
-      password,
+      password: await bcrypt.hash(password, 10),
     });
 
     await admin.save();
-    res.json({ message: "Success!", admin });
+    res.json({ status: true, message: "Success!", admin });
   } catch (err) {
     res.json({ message: err.message });
   }
