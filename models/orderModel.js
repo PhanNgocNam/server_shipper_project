@@ -17,11 +17,11 @@ const orderSchema = new mongoose.Schema({
   coords: {
     lng: {
       type: String,
-      required: true,
+      required: false,
     },
     lat: {
       type: String,
-      required: true,
+      required: false,
     },
   },
   orderName: {
