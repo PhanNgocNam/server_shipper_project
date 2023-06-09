@@ -5,17 +5,18 @@ module.exports.login = async (req, res, next) => {
   try {
     const { username, password } = req.body;
 
-    const admin = await adminUser.findOne({ username });
-    const checkPassResult = await bcrypt.compare(password, admin.password);
-    // const checkPassResult = true;
+    const admin = await adminUser.findOne({ username: username });
 
     if (!admin) {
       return res.json({ message: "Tên đằng nhập không đúng!", status: false });
-    } else if (!checkPassResult) {
-      return res.json({ message: "Mật khẩu không đúng!", status: false });
     } else {
-      admin.save();
-      return res.json({ status: true, admin });
+      const checkPassResult = await bcrypt.compare(password, admin.password);
+      if (!checkPassResult) {
+        return res.json({ message: "Mật khẩu không đúng!", status: false });
+      } else {
+        admin.save();
+        return res.json({ status: true, admin });
+      }
     }
   } catch (ex) {
     next(ex);
